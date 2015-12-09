@@ -35,8 +35,13 @@ app.factory('books', ['$http', function($http){
   };
 
   o.searchBooks = function(query){
-
-  }
+    console.log('we are in service now: ' + query);
+    return $http.get('/books/' + query).success(function(data){
+      console.log('success');
+    }).error(function(data){
+      console.log('error: ' + data)
+    });
+  };
   return o;
 }]);
 
@@ -91,7 +96,7 @@ app.controller('BooksCtrl', [
 'books',
 function($scope, $stateParams, books){
 
-  $scope.query = 'enter text here';
+  $scope.query = '';
   $scope.books = books;
 
   $scope.searchBooks = function(query){

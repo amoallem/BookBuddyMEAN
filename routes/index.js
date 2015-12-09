@@ -1,15 +1,20 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
+var request = require('request');
 var Book = mongoose.model('Book');
 var Comment = mongoose.model('Comment');
 
-router.get('/books', function(req, res, next) {
-  Book.find(function(err, posts){
-    if(err){ return next(err); }
-
-    res.json(books);
-  });
+router.get('/books/:query', function(req, res, next) {
+	console.log('/books/:query is called');
+	var url = "https://www.googleapis.com/books/v1/volumes?q=" + req.query;
+	request(url, function(err, res, body){
+    	if(err){
+    		console.log('error in /books/query');
+    		return next(err); }
+    	console.log(body.items);
+    	res.json(body.items);
+  	});
 });
 
 /* GET home page. */
