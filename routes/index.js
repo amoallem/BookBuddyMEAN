@@ -6,14 +6,16 @@ var Book = mongoose.model('Book');
 var Comment = mongoose.model('Comment');
 
 router.get('/books/:query', function(req, res, next) {
-	console.log('/books/:query is called');
-	var url = "https://www.googleapis.com/books/v1/volumes?q=" + req.query;
-	request(url, function(err, res, body){
-    	if(err){
-    		console.log('error in /books/query');
-    		return next(err); }
-    	console.log(body.items);
-    	res.json(body.items);
+	console.log('/books/:query is called : '+ req.params.query);
+	var url = "https://www.googleapis.com/books/v1/volumes?q=" + req.params.query;
+	request(url, function(error, response, body){
+		if(!error && response.statusCode == 200){
+			//console.log(body);
+			res.json(body);
+		}else{
+			console.log('error in /books/query');
+    		return next(err); 
+    	}
   	});
 });
 

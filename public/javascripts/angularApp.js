@@ -1,4 +1,4 @@
-var app = angular.module('flapperNews', ['ui.router']);
+var app = angular.module('bookbuddy', ['ui.router']);
 
 app.config([
 '$stateProvider',
@@ -11,13 +11,6 @@ function($stateProvider, $urlRouterProvider) {
       templateUrl: '/home.html',
       controller: 'MainCtrl'
     });
-
-  $stateProvider
-    .state('posts', {
-      url: '/posts/{id}',
-      templateUrl: '/posts.html',
-      controller: 'PostsCtrl'
-  });
 
   $stateProvider
     .state('books', {
@@ -37,7 +30,7 @@ app.factory('books', ['$http', function($http){
   o.searchBooks = function(query){
     console.log('we are in service now: ' + query);
     return $http.get('/books/' + query).success(function(data){
-      console.log('success');
+      angular.copy(angular.fromJson(data).items, o.books);
     }).error(function(data){
       console.log('error: ' + data)
     });
@@ -71,25 +64,6 @@ $scope.incrementUpvotes = function(post) {
 
 }]);
 
-app.controller('PostsCtrl', [
-'$scope',
-'$stateParams',
-'posts',
-function($scope, $stateParams, posts){
-  $scope.post = posts.posts[$stateParams.id];
-
-  $scope.addComment = function(){
-    if($scope.body === '') { return; }
-    $scope.post.comments.push({
-      body: $scope.body,
-      author: 'user',
-      upvotes: 0
-    });
-    $scope.body = '';
-  };
-
-}]);
-
 app.controller('BooksCtrl', [
 '$scope',
 '$stateParams',
@@ -97,7 +71,7 @@ app.controller('BooksCtrl', [
 function($scope, $stateParams, books){
 
   $scope.query = '';
-  $scope.books = books;
+  $scope.books = books.books;
 
   $scope.searchBooks = function(query){
     books.searchBooks(query);
